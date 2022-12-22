@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+{% block content %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Vamos a realizar una consulta simple</h1>
+      </div>
+
+
+
+        <div class="mx-auto col-5" style="margin-top: 10rem";>
+          <h3 class="text-center mb-3 text-secondary"> 
+            Selecciona las fechas:
+            <form id="form" action="{{ url_server }}/analisis" method="post"> {% csrf_token %}
+              {{ form.as_p }}
+              <button type="button" onclick="sendDates()" class="btn btn-primary mt-3">Ver estadísticas</button>
+
+             </form>
+            <!--
+            <form id="form" action="{{ url_server }}/analisis" method="post"> {% csrf_token %}
+                  <input id="datepicker" class="form-control" type="date" placeholder="selecciona las fechas a estudiar">
+                    
+                    <button type="button" onclick="sendDates()" class="btn btn-primary mt-3">Ver estadísticas</button>
+            </form>
+          -->
+          </h3>
+        </div>
+
+
+        
+    </main>
+  </div>
+</div>
+
+{% block data %}
+
+<!-- FlatPickr JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+  //choose labels 
+  var labelGenerado = document.getElementsByTagName("label")[0];
+  labelGenerado.innerHTML = "";
+
+  config = {
+    mode: "range"
+  }
+  flatpickr("#datepicker", config);
+
+  function sendDates(){
+    console.log("hola");
+    var dates = document.getElementById("datepicker").value;
+    var startDate = dates.split(" to ")[0];
+    var endDate = dates.split(" to ")[1];
+    var startDay = startDate.split("/")[0];
+    var startMonth = startDate.split("/")[1];
+    var startYear = startDate.split("/")[2];
+    var endDay = endDate.split("/")[0];
+    var endMonth = endDate.split("/")[1];
+    var endYear = endDate.split("/")[2];
+    document.getElementById("form").submit();
+  }
+</script>
+
+
+{% endblock data %}
+
+{% endblock content %}
+
+
+
+  
+
