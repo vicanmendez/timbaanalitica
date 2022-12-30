@@ -20,15 +20,76 @@
               <button type="button" onclick="sendDates()" class="btn btn-primary mt-3">Ver estadísticas</button>
 
              </form>
-            <!--
-            <form id="form" action="{{ url_server }}/analisis" method="post"> {% csrf_token %}
-                  <input id="datepicker" class="form-control" type="date" placeholder="selecciona las fechas a estudiar">
+         
+            </h3>
+          </div>
+
+        {% if data %}
+
+          
+              <div id="tableResults" class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th colspan="3" class="text-center">Resultados obtenidos</th>
+                    </tr>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Fecha</th>
+                      <th scope="col"> Datos </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for item, n in data %}
+
+                    <tr class="accordion-toggle collapsed"
+                      id="accordion{{ n }}"
+                      data-mdb-toggle="collapse"
+                      data-mdb-parent="#accordion{{ n }}"
+                      href="#collapse{{n}}"
+                      aria-controls="collapse{{n}}"
+                    >
+                      <td class="expand-button"></td>
+                      <!-- If data array is not empty, then show in tables-->
+                     
+                          <td>       {{ item.date | date:"d / m / Y"}}</td>
+                          {% if item.numbers_afternoon or item.numbers.night %}
+                            <td> Tenemos datos </td>
+                         {% else %}
+                            <td> No corresponden sorteos </td>
+                          {% endif %}
+                 
+                    </tr>
+                    <tr class="hide-table-padding">
+                      <td></td>
+                      <td colspan="3">
+                        <div id="collapse{{n}}" class="collapse in p-3">
+                          <div class="row">
+                            <div class="col-2 font-weight-bold">Vespertina</div>
+                            {% for number in item.numbers_afternoon%}
+                             {{ number }}  -   
+                            {% endfor %}
+                          </div>
+                          <div class="row">
+                            <div class="col-2 font-weight-bold">Nocturna</div>
+                            {% for number in item.numbers_night%}
+                             {{ number }}   -
+                            {% endfor %}
+                          </div>
+                         
+                        </div></td>
+                    </tr>
+
+                     {% endfor %}
+
                     
-                    <button type="button" onclick="sendDates()" class="btn btn-primary mt-3">Ver estadísticas</button>
-            </form>
-          -->
-          </h3>
-        </div>
+                  </tbody>
+                </table>
+              </div>
+            
+      {% endif %}
+
+         
 
 
         
