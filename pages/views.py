@@ -33,8 +33,15 @@ def analysis_view(request, *args, **kwargs):
     #As we modified the form and the format of the date is not the same as the one in the database, we need to skip chequing date validation
     print (form.data)
     #Let's extract the dates range and and check if we already have the data in the database
+    #define an array of 1000 integers using list comprehension
+    numbers = {}
     data = None
+    typeFilter = None
+    top = None
     if (form.data.get('dates') != None):
+        typeFilter = form.data.get('typeFilter')
+        top = form.data.get('numberFilter')
+        print("Tipo de filtro: " + typeFilter + " Numeros a mostrar: " + top)
         data = []
         dates = form.data.get('dates')
         #get integers from dates string and then create datetime objects
@@ -48,15 +55,21 @@ def analysis_view(request, *args, **kwargs):
             try:
                 obj = Lottery.objects.get(date=str(d)[0:10])
                 data.append(obj)
-                if(obj != None):
-                    print("Numeros del dia: " + str(d) + " en el turno de la tarde son: " + str(obj.numbers_afternoon))
-                    print("Numeros del dia: " + str(d) + " en el turno de la noche son: " + str(obj.numbers_night))
+                for n in obj.numbers_afternoon:
+                    numbers[int(n)] = numbers.get(int(n), 0) + 1
+                for n in obj.numbers_night:
+                    numbers[int(n)] = numbers.get(int(n), 0) + 1
             except Lottery.DoesNotExist:
                 print("No tenemos los datos de la fecha: " + str(d))
                 print("Haciendo scrapping y recuperando data...")
                 if(Lottery.getDataAndSaveLottery(str(d)[8:10], str(d)[5:7], str(d)[0:4])):
                     print("Datos recuperados y guardados en la base de datos")
-                    data.append(Lottery.objects.get(date=str(d)[0:10]))
+                    lottery = Lottery.objects.get(date=str(d)[0:10])
+                    data.append(lottery)
+                    for n in lottery.numbers_afternoon:
+                        numbers[int(n)] = numbers.get(int(n), 0) + 1
+                    for n in lottery.numbers_night:
+                        numbers[int(n)] = numbers.get(int(n), 0) + 1
                 else:
                     print("Error al recuperar los datos")
                 
@@ -69,13 +82,48 @@ def analysis_view(request, *args, **kwargs):
         for i in range(1, len(data)):
             ndates.append(i)
         myData = zip(data, ndates)
+    if(typeFilter != None):
+        if (typeFilter == '1'):
+            print("Ordenando los números de mayor a menor")
+            numbers = sorted(numbers.items(), key=lambda x:x[1], reverse=True) 
+            numbers = dict(numbers)
+        elif (typeFilter == '2'):
+            print("Ordenando los números de menor a mayor")
+            numbers = sorted(numbers.items(), key=lambda x:x[1]) 
+            numbers = dict(numbers)
+    if (top != None):
+        try:
+            new_dict = {}
+            # Iterate over the dictionary and add the elements to the new dictionary
+            for i, (key, value) in enumerate(numbers.items()):
+                new_dict[key] = value
+                if i+1 == int(top):
+                    break
+            numbers = new_dict
+        except:
+            print("No se esta filtrando por cantiad de numeros")
+    print(numbers)
     context = {
         "form": form,
         "url_server": url_server,
         "active": "analysis",
         "data": myData,
+        "numbers": numbers,
+        
 
     }
     return render(request,"nuevo.html", context)
+
+#Function that receives a dictionary and an integer and returns a dictionary with the first x elements of the dictionary
+    def first_x_elements(dictionary, x):
+        # Create an empty dictionary to store the elements
+        new_dict = {}
+        # Iterate over the dictionary and add the elements to the new dictionary
+        for i, (key, value) in enumerate(dictionary.items()):
+            new_dict[key] = value
+            if i+1 == x:
+                break
+        # Return the new dictionary
+        return new_dict
 
 

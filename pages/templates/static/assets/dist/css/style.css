@@ -1,9 +1,6 @@
 
 
-#tableResults {
-margin-top: 10em;
 
-}
 
 /* Collapse table MDB */
 tr.hide-table-padding td {
@@ -16,13 +13,23 @@ tr.hide-table-padding td {
   
     .accordion-toggle .expand-button:after
     {
+      color: #279127;
       position: absolute;
       left:.75rem;
       top: 50%;
       transform: translate(0, -50%);
-      content: '- Ocultar sorteo';
+      content: '- Ocultar';
     }
     .accordion-toggle.collapsed .expand-button:after
     {
       content: '+ Ver sorteo';
+    }
+
+    #tableResults {
+      margin-top: 10em;
+      
+      }
+      
+    #analisis{
+        margin-top: 10em;
     }

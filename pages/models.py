@@ -41,7 +41,10 @@ class Lottery(models.Model):
         numbers = myScrapper.getLottery()
         numbers_afternoon = numbers['afternoon']
         numbers_night = numbers['night']
-        if(Lottery.objects.create(date=my_date, numbers_afternoon=numbers_afternoon, numbers_night=numbers_night)):
-            return True
+        if (len(numbers_afternoon) > 0 or len(numbers_night) > 0):
+            if(Lottery.objects.create(date=my_date, numbers_afternoon=numbers_afternoon, numbers_night=numbers_night)):
+                return True
         return False
+
+    
     
