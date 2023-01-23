@@ -52,11 +52,13 @@
                         <!-- If data array is not empty, then show in tables-->
                       
                             <td>       {{ item.date | date:"d / m / Y"}}</td>
-                            {% if item.numbers_afternoon or item.numbers.night %}
-                              <td> Tenemos datos </td>
-                          {% else %}
-                              <td> No corresponden sorteos </td>
-                            {% endif %}
+                           {% if item.numbers_afternoon or item.numbers.night %}
+                              <td> Vespertina y nocturna </td>
+                           {% elif not item.numbers_afternoon %}
+                              <td> Sólo nocturna </td>
+                           {% elif not item.numbers_night %}
+                              <td> Sólo vespertina </td>
+                           {% endif %}
                   
                       </tr>
                       <tr class="hide-table-padding">
@@ -108,7 +110,7 @@
                     <tbody>
                       {% for key, value in numbers.items %}
                         <tr>
-                          <th scope="row" class="text-center"> {{ key }}</th>
+                          <th scope="row" class="text-center"> {{ key|stringformat:"03d" }}</th>
                           <td class="text-center"> {{ value }} </td>
                         </tr>
                       {% endfor %}
@@ -147,7 +149,7 @@
          <script src="{% static '/assets/js/vendor/jquery.slim.min.js' %}"> </script>
         <script src="{% static '/assets/dist/js/bootstrap.bundle.min.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <script>
 
@@ -202,6 +204,7 @@
                 {% endfor %}
                 ],
                 datasets: [{
+                  label: 'Veces sorteado',
                   data: [
                   {% for key, value in numbers.items %}
                   {{ value }},

@@ -12,9 +12,47 @@ from datetime import datetime, timedelta
 url_server = "http://localhost:8000"
 
 def homepage_view(request, *args, **kwargs):
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=7)
+    delta = end_date - start_date
+    date_list = [start_date + timedelta(days=d) for d in range((delta).days + 1)] 
+    data = []
+    numbers = {}
+    for d in date_list:
+        #Check in the database if we already have the data
+        try:
+            obj = Lottery.objects.get(date=str(d)[0:10])
+            data.append(obj)
+            for n in obj.numbers_afternoon:
+                numbers[int(n)] = numbers.get(int(n), 0) + 1
+            for n in obj.numbers_night:
+                numbers[int(n)] = numbers.get(int(n), 0) + 1
+        except Lottery.DoesNotExist:
+           #If we don't have the tdata, get the data from the website
+            if(Lottery.getDataAndSaveLottery(str(d)[8:10], str(d)[5:7], str(d)[0:4])):
+                lottery = Lottery.objects.get(date=str(d)[0:10])
+                data.append(lottery)
+                for n in lottery.numbers_afternoon:
+                    numbers[int(n)] = numbers.get(int(n), 0) + 1
+                for n in lottery.numbers_night:
+                    numbers[int(n)] = numbers.get(int(n), 0) + 1
+            else:
+                print("Error al recuperar los datos")
+    ndates = []
+    myData = None
+    if (data != None):
+        for i in range(1, len(data)):
+            ndates.append(i)
+        myData = zip(data, ndates)
+    numbers = sorted(numbers.items(), key=lambda x:x[1], reverse=True) 
+    numbers = dict(numbers)
+    
+                
     context = {
         "url_server": url_server,
         "active": "home",
+        "data": myData,
+        "numbers": numbers
     }
 #    return HttpResponse("<h1>Hello World</h1>")
     return render(request, "index.html", context)
