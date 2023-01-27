@@ -11,31 +11,51 @@ from datetime import datetime, timedelta
 #Modificar en prod
 url_server = "http://localhost:8000"
 
+
 def homepage_view(request, *args, **kwargs):
+    #Making up the view
     end_date = datetime.now()
     start_date = end_date - timedelta(days=7)
     delta = end_date - start_date
     date_list = [start_date + timedelta(days=d) for d in range((delta).days + 1)] 
     data = []
     numbers = {}
+    #For instance, it is important to store the amount of times that a number is in the 1st position
+    numbers_head = {}
     for d in date_list:
         #Check in the database if we already have the data
         try:
             obj = Lottery.objects.get(date=str(d)[0:10])
             data.append(obj)
+            i=0
             for n in obj.numbers_afternoon:
                 numbers[int(n)] = numbers.get(int(n), 0) + 1
+                if(i==0):
+                    numbers_head[int(n)] = numbers_head.get(int(n), 0) + 1
+                i=i+1
+            i=0
             for n in obj.numbers_night:
+                if(i==0):
+                    numbers_head[int(n)] = numbers_head.get(int(n), 0) + 1
                 numbers[int(n)] = numbers.get(int(n), 0) + 1
+                i = i+1
         except Lottery.DoesNotExist:
            #If we don't have the tdata, get the data from the website
             if(Lottery.getDataAndSaveLottery(str(d)[8:10], str(d)[5:7], str(d)[0:4])):
                 lottery = Lottery.objects.get(date=str(d)[0:10])
                 data.append(lottery)
+                i=0
                 for n in lottery.numbers_afternoon:
                     numbers[int(n)] = numbers.get(int(n), 0) + 1
+                    if(i==0):
+                        numbers_head[int(n)] = numbers_head.get(int(n), 0) + 1
+                    i = i+1
+                i=0
                 for n in lottery.numbers_night:
                     numbers[int(n)] = numbers.get(int(n), 0) + 1
+                    if(i==0):
+                        numbers_head[int(n)] = numbers_head.get(int(n), 0) + 1
+                    i = i+1
             else:
                 print("Error al recuperar los datos")
     ndates = []
@@ -45,14 +65,17 @@ def homepage_view(request, *args, **kwargs):
             ndates.append(i)
         myData = zip(data, ndates)
     numbers = sorted(numbers.items(), key=lambda x:x[1], reverse=True) 
+    #numbers_head = sorted(numbers_head.items(), key=lambda x:x[1], reverse=True) 
     numbers = dict(numbers)
+    numbers_head = dict(numbers_head)
     
                 
     context = {
         "url_server": url_server,
         "active": "home",
         "data": myData,
-        "numbers": numbers
+        "numbers": numbers,
+        "numbers_head": numbers_head,
     }
 #    return HttpResponse("<h1>Hello World</h1>")
     return render(request, "index.html", context)

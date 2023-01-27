@@ -6,7 +6,7 @@
     {% block content %}
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Tendencias de la semana</h1>
+        <h1 class="h2">Tendencias de la semana (últimos 7 días)</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
           </div>
@@ -35,17 +35,17 @@
                           <tr>
                             <td class="text-center"> {{ key|stringformat:"03d" }}</td>
                             <td class="text-center"> {{ value }} </td>
-                            <td class="text-center"> {{ value }} </td>
+                            <td class="text-center"> {% for k, value2 in numbers_head.items %} {% if key == k %} {{ value2 }} {% endif %} {% endfor %} {% if not key in numbers_head %} 0 {% endif %}</td>
 
                           </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
-
+          
         {% endif %}
       </div>
-        
+       
     </main>
   </div>
 </div>
