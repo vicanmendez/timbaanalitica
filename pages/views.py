@@ -5,14 +5,20 @@ from django.shortcuts import render
 from .forms import ConsultaForm
 from .models import Lottery
 from datetime import datetime, timedelta
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 
 #Modificar en prod
 url_server = "http://localhost:8000"
 
-
+@login_required
 def homepage_view(request, *args, **kwargs):
+    if request.user.is_authenticated:
+        print("Logged in")
+    else:
+        print("Not logged in")
     #Making up the view
     end_date = datetime.now()
     start_date = end_date - timedelta(days=7)
@@ -81,6 +87,7 @@ def homepage_view(request, *args, **kwargs):
     return render(request, "index.html", context)
 
 
+@login_required
 def notifications_view(request, *args, **kwargs):
     context = {
         "url_server": url_server,
@@ -89,6 +96,7 @@ def notifications_view(request, *args, **kwargs):
     return render(request,"notificaciones.html", context)
 
 
+@login_required
 def analysis_view(request, *args, **kwargs):
     form = ConsultaForm(request.POST or None)
     #As we modified the form and the format of the date is not the same as the one in the database, we need to skip chequing date validation
