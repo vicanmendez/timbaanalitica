@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+    {% block content %}
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Tendencias de la semana (últimos 7 días)</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mr-2">
+          </div>
+        
+        </div>
+      </div>
+
+      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+    
+      <div class="row" style="margin-top: 5em">
+
+        <h2>Estadísticas de la semana</h2>
+        {% if numbers %}
+        <div class="table-responsive">
+          <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th class="text-center">Número</th>
+                <th class="text-center">¿Cuántas veces salió?</th>
+                <th class="text-center">¿Cuántas a la cabeza?</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for key, value in numbers.items %}
+                          <tr>
+                            <td class="text-center"> {{ key|stringformat:"03d" }}</td>
+                            <td class="text-center"> {{ value }} </td>
+                            <td class="text-center"> {% for k, value2 in numbers_head.items %} {% if key == k %} {{ value2 }} {% endif %} {% endfor %} {% if not key in numbers_head %} 0 {% endif %}</td>
+
+                          </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+          
+        {% endif %}
+      </div>
+       
+    </main>
+  </div>
+</div>
+
+
+{% block data %}
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="{% static '/assets/js/vendor/jquery.slim.min.js' %}"> </script>
+<script src="{% static '/assets/dist/js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+    
+        
+        {% endblock data %}
+        
+        
+        
+        {% endblock content %}
+        
+        {% block scripts %}
+        
+        
+        <script>
+          /* globals Chart:false, feather:false */ 
+        
+
+            // Graphs
+            var ctx = document.getElementById('myChart')
+            // eslint-disable-next-line no-unused-vars
+            var myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+        
+                labels: [
+                {% for key, value in numbers.items %}
+                  {{ key|stringformat:"03d" }},
+                {% endfor %}
+                ],
+                datasets: [{
+                  label: 'Veces sorteado',
+                  data: [
+                  {% for key, value in numbers.items %}
+                  {{ value }},
+                {% endfor %}
+                  ],
+                  lineTension: 0,
+                  backgroundColor: 'transparent',
+                  borderColor: '#007bff',
+                  borderWidth: 4,
+                  pointBackgroundColor: '#007bff'
+                }]
+              },
+              options: {
+                scales: {
+                  yAxes: [{
+                    ticks: {
+                      beginAtZero: false
+                    },
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Veces sorteado'
+                    }
+                  }]
+                },
+                xAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Número'
+                  }
+                }],
+                legend: {
+                  display: false
+                }
+              }
+            })
+        
+        </script>
+
+        <script src="{% static '/assets/dist/js/functions.js' %}" > </script>
+      <!-- MDB -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"></script>
+        <script>
+          $(document).ready(function () {
+            $('#dtBasicExample').DataTable({
+              "order": [[ 1, "desc" ]],
+              "searching": false
+            });
+            $('.dataTables_length').addClass('bs-select');
+          });
+        </script>
+      </body>
+      </html>
+{% endblock scripts %}
+  
+
+
+  

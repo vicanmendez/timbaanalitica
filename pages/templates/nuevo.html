@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+{% block content %}
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Vamos a realizar una consulta simple</h1>
+      </div>
+
+
+
+        <div class="mx-auto col-5" style="margin-top: 10rem">
+          <h3 class="text-center mb-3 text-secondary"> 
+            <form id="form" action="{{ url_server }}/analisis" method="post"> {% csrf_token %}
+              {{ form.as_p }}
+              <button type="button" onclick="sendDates()" class="btn btn-primary mt-3">Ver estadísticas</button>
+
+             </form>
+         
+            </h3>
+          </div>
+
+        {% if data %}
+
+            <container class="container">                  
+                <div id="tableResults" class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th colspan="3" class="text-center"> LISTA DE SORTEOS </th>
+                      </tr>
+                      <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col" class="text-center">Fecha</th>
+                        <th scope="col" class="text-center"> Datos </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for item, n in data %}
+
+                      <tr class="accordion-toggle collapsed text-center"
+                        id="accordion{{ n }}"
+                        data-mdb-toggle="collapse"
+                        data-mdb-parent="#accordion{{ n }}"
+                        href="#collapse{{n}}"
+                        aria-controls="collapse{{n}}"
+                      >
+                        <td class="expand-button"></td>
+                        <!-- If data array is not empty, then show in tables-->
+                      
+                            <td>       {{ item.date | date:"d / m / Y"}}</td>
+                           {% if item.numbers_afternoon or item.numbers.night %}
+                              <td> Vespertina y nocturna </td>
+                           {% elif not item.numbers_afternoon %}
+                              <td> Sólo nocturna </td>
+                           {% elif not item.numbers_night %}
+                              <td> Sólo vespertina </td>
+                           {% endif %}
+                  
+                      </tr>
+                      <tr class="hide-table-padding">
+                        <td></td>
+                        <td colspan="3">
+                          <div id="collapse{{n}}" class="collapse in p-3">
+                            <div class="row">
+                              <div class="col-2 font-weight-bold">Vespertina</div>
+                              {% for number in item.numbers_afternoon%}
+                              {{ number }}  -   
+                              {% endfor %}
+                            </div>
+                            <div class="row">
+                              <div class="col-2 font-weight-bold">Nocturna</div>
+                              {% for number in item.numbers_night%}
+                              {{ number }}   -
+                              {% endfor %}
+                            </div>
+                          
+                          </div></td>
+                      </tr>
+
+                      {% endfor %}
+
+                      
+                    </tbody>
+                  </table>
+                </div>
+          </container>
+
+          
+          
+          <container>
+            <!-- Separate the content area in two columns -->
+            <div class="row" id="analisis">
+              <div class="col-6">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th colspan="2" class="text-center"> ANÁLISIS </th>
+                      </tr>
+                      <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col" class="text-center">Veces sorteado en el período</th>
+                     
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key, value in numbers.items %}
+                        <tr>
+                          <th scope="row" class="text-center"> {{ key|stringformat:"03d" }}</th>
+                          <td class="text-center"> {{ value }} </td>
+                        </tr>
+                      {% endfor %}
+                      
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-6">
+                <!-- Insert the chart aside the table above -->
+                <canvas class="my-4 w-100" id="chartAnalisis" width="900" height="380"></canvas>
+
+              </div>
+            
+          </container>
+
+          <button type="button" class="btn btn-primary btn-lg btn-block" onclick="alert('Esta funcionalidad aún no ha sido desarrollada')"> Guardar análisis </button>
+
+            
+      {% endif %}
+
+         
+
+
+        
+    </main>
+  </div>
+</div>
+
+{% block data %}
+
+<!-- FlatPickr JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+         <script src="{% static '/assets/js/vendor/jquery.slim.min.js' %}"> </script>
+        <script src="{% static '/assets/dist/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+
+          config = {
+            mode: "range"
+          }
+          flatpickr("#datepicker", config);
+        
+          function sendDates(){
+            console.log("hola");
+            var dates = document.getElementById("datepicker").value;
+            var startDate = dates.split(" to ")[0];
+            var endDate = dates.split(" to ")[1];
+            var startDay = startDate.split("/")[0];
+            var startMonth = startDate.split("/")[1];
+            var startYear = startDate.split("/")[2];
+            var endDay = endDate.split("/")[0];
+            var endMonth = endDate.split("/")[1];
+            var endYear = endDate.split("/")[2];
+            document.getElementById("form").submit();
+          }
+        </script>
+        
+        
+        {% endblock data %}
+        
+        
+        
+        {% endblock content %}
+        
+        {% block scripts %}
+        
+        
+        <script>
+          /* globals Chart:false, feather:false */ 
+        
+          (function () {
+            'use strict'
+        
+            feather.replace()
+        
+            // Graphs
+            var ctx = document.getElementById('chartAnalisis')
+            // eslint-disable-next-line no-unused-vars
+            var myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+        
+                labels: [
+                {% for key, value in numbers.items %}
+                  {{ key }},
+                {% endfor %}
+                ],
+                datasets: [{
+                  label: 'Veces sorteado',
+                  data: [
+                  {% for key, value in numbers.items %}
+                  {{ value }},
+                {% endfor %}
+                  ],
+                  lineTension: 0,
+                  backgroundColor: 'transparent',
+                  borderColor: '#007bff',
+                  borderWidth: 4,
+                  pointBackgroundColor: '#007bff'
+                }]
+              },
+              options: {
+                scales: {
+                  yAxes: [{
+                    ticks: {
+                      beginAtZero: false
+                    },
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Veces sorteado'
+                    }
+                  }]
+                },
+                xAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Número'
+                  }
+                }],
+                legend: {
+                  display: false
+                }
+              }
+            })
+          })()
+        
+        </script>
+
+        <script src="{% static '/assets/dist/js/functions.js' %}" > </script>
+      <!-- MDB -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.js"></script>
+
+      </body>
+      </html>
+{% endblock scripts %}
+  
+

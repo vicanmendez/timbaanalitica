@@ -1,0 +1,48 @@
+
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before {
+  bottom: .5em;
+}
+
+
+/* Collapse table MDB */
+tr.hide-table-padding td {
+    padding: 0;
+    }
+  
+    .expand-button {
+      position: relative;
+    }
+  
+    .accordion-toggle .expand-button:after
+    {
+      color: #279127;
+      position: absolute;
+      left:.75rem;
+      top: 50%;
+      transform: translate(0, -50%);
+      content: '- Ocultar';
+    }
+    .accordion-toggle.collapsed .expand-button:after
+    {
+      content: '+ Ver sorteo';
+    }
+
+    #tableResults {
+      margin-top: 10em;
+      
+      }
+      
+    #analisis{
+        margin-top: 10em;
+    }
+
+  

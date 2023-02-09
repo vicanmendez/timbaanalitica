@@ -1,0 +1,11 @@
+Debemos tener previamente instalado Python 3.10 y Django 4.1.4
+
+python -m pip install django~=4.1.4
+
+python -m pip install beautifulsoup4
+
+python -m pip install requests
+
+Luego ya podemos correr el servidor (posicionando en CLI sobre la carpeta actual)
+
+python manage.py runserver
