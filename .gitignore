@@ -1,0 +1,20 @@
+# .env file
+.env
+
+# Secret key
+settings/local.py
+
+# database settings
+settings/db.py
+
+# local files
+*.sqlite3
+
+# cache files
+__pycache__/
+*.pyc
+
+# media files
+media/
+
+settings.py

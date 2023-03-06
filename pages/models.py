@@ -35,15 +35,18 @@ class Lottery(models.Model):
     numbers_night = models.JSONField(default=list)
     
     def getDataAndSaveLottery(day, month, year):
-        from .scrapper.scrapper import Scrapper
-        myScrapper = Scrapper(day, month, year)
-        my_date = date(int(year), int(month), int(day))
-        numbers = myScrapper.getLottery()
-        numbers_afternoon = numbers['afternoon']
-        numbers_night = numbers['night']
-        if (len(numbers_afternoon) > 0 or len(numbers_night) > 0):
-            if(Lottery.objects.create(date=my_date, numbers_afternoon=numbers_afternoon, numbers_night=numbers_night)):
-                return True
+        try:
+            from .scrapper.scrapper import Scrapper
+            myScrapper = Scrapper(day, month, year)
+            my_date = date(int(year), int(month), int(day))
+            numbers = myScrapper.getLottery()
+            numbers_afternoon = numbers['afternoon']
+            numbers_night = numbers['night']
+            if (len(numbers_afternoon) > 0 or len(numbers_night) > 0):
+                if(Lottery.objects.create(date=my_date, numbers_afternoon=numbers_afternoon, numbers_night=numbers_night)):
+                    return True
+        except: 
+         return False
         return False
 
     

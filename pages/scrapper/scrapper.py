@@ -27,7 +27,7 @@ class Scrapper:
         self.day = day
         self.month = month
         self.year = year
-        self.url = "https://www.loteria.gub.uy/ver_resultados.php"
+        self.url = "https://www2.loteria.gub.uy/ver_resultados.php"
         
     def __del__(self):
         print("Destructor called, Scrapper object deleted")
