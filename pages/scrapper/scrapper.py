@@ -7,7 +7,9 @@ Created on Fri Dec 23 15:51:23 2022
 
 from bs4 import BeautifulSoup as bs
 import requests
+import random
 from datetime import datetime, timedelta
+from . import user_agents
 
 
 class Scrapper:
@@ -16,6 +18,7 @@ class Scrapper:
         self.month = month
         self.year = year
         self.url = url
+
 
     def __init__(self):
         self.url = "https://www.loteria.gub.uy/ver_resultados.php"
@@ -64,7 +67,15 @@ class Scrapper:
                 "vmes": self.month,
                 "vano": self.year
                 }
-            document = requests.get(self.url, params)
+             # Randomly choose a user agent from the array
+            user_agent = random.choice(self.user_agents)
+            print("Using user agent: " + user_agent)
+
+            # Set the headers to use the chosen user agent
+            headers = {
+                'User-Agent': user_agent
+            }
+            document = requests.get(self.url, params, headers=headers)
             soup = bs(document.text, "html.parser")
             numbers_str = soup.findAll("div", {"class": "text_azul_3"})
             numbers = []
@@ -129,6 +140,8 @@ class Scrapper:
                 self.setMonth(d.month)
                 self.setYear(d.year)
                 lottery = self.getLottery()
+                #wait a second before next request
+                time.sleep(1)
                 if(lottery):
                  lotteries.append(lottery)
             return lotteries
