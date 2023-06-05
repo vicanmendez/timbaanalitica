@@ -18,19 +18,26 @@ class Scrapper:
         self.month = month
         self.year = year
         self.url = url
+        self.user_agents = user_agents.user_agents
 
 
     def __init__(self):
         self.url = "https://www.loteria.gub.uy/ver_resultados.php"
+        self.user_agents = user_agents.user_agents
+
         
     def __init__(self, url):
         self.url = url
+        self.user_agents = user_agents.user_agents
+
         
     def __init__(self, day, month, year):
         self.day = day
         self.month = month
         self.year = year
         self.url = "https://www2.loteria.gub.uy/ver_resultados.php"
+        self.user_agents = user_agents.user_agents
+
         
     def __del__(self):
         print("Destructor called, Scrapper object deleted")
@@ -69,6 +76,7 @@ class Scrapper:
                 }
              # Randomly choose a user agent from the array
             user_agent = random.choice(self.user_agents)
+            print("CUALQUIER COSAAAAA")
             print("Using user agent: " + user_agent)
 
             # Set the headers to use the chosen user agent
@@ -76,6 +84,7 @@ class Scrapper:
                 'User-Agent': user_agent
             }
             document = requests.get(self.url, params, headers=headers)
+            print("Requesting: " + document.url)
             soup = bs(document.text, "html.parser")
             numbers_str = soup.findAll("div", {"class": "text_azul_3"})
             numbers = []
